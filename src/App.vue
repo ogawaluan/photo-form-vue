@@ -3,7 +3,7 @@
     <h2>Verify document</h2>
     <p>{{ isWebcamReady ? 'please, take a photo with your document' : 'We need your permission to take the photo' }}</p>
 
-    <Photo :is-webcam-ready="isWebcamReady" :updatePhoto="(photo) => formData.photo = photo" />    
+    <Camera :is-webcam-ready="isWebcamReady" :updatePhoto="(photo) => formData.photo = photo" />    
 
     <form 
       @submit.prevent="handleSubmit" 
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import Photo from './components/Photo.vue';
+  import Camera from './components/Camera.vue';
 
   export default {
     data() {
@@ -48,7 +48,7 @@
       }
     },
     components: {
-      Photo,
+      Camera,
     },
   }
 </script>
