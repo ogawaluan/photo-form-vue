@@ -3,16 +3,7 @@
     <h2>Verify document</h2>
     <p>{{ isWebcamReady ? 'please, take a photo with your document' : 'We need your permission to take the photo' }}</p>
 
-    <video ref="video" width="640" height="480"></video>
-
-    <button 
-      @click="capturePhoto"
-      :disabled="!isWebcamReady"
-    >Take photo</button>
-
-    <canvas 
-      ref="canvas" 
-    ></canvas>
+    <Photo :is-webcam-ready="isWebcamReady" :updatePhoto="(photo) => formData.photo = photo" />    
 
     <form 
       @submit.prevent="handleSubmit" 
@@ -29,52 +20,35 @@
 </template>
 
 <script>
+  import Photo from './components/Photo.vue';
+
   export default {
     data() {
       return {
-        isWebcamReady: false,
         formData: {
           name: '',
           photo: null,
-        }
+        },
+        isWebcamReady: false,
       };
     },
-    mounted() {
-      this.initializeWebcam();
-    },
     methods: {
-      async initializeWebcam() {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-          const videoRef = this.$refs.video;
-          videoRef.srcObject = stream;
-          videoRef.play();
-          this.isWebcamReady = true;
-        } catch (err) {
-          console.log('Error to access the webcam', err);
-        }
-      },
-      capturePhoto() {
-        const videoRef = this.$refs.video;
-        const canvasRef = this.$refs.canvas;
-        const ctx = canvasRef.getContext('2d');
-        canvasRef.width = 640
-        canvasRef.height = 480
-
-        ctx.drawImage(videoRef, 0, 0, canvasRef.width, canvasRef.height);
-
-        canvasRef.toBlob((blob) => {
-          this.formData.photo = new File([blob], 'document.png', { type: 'image/png' });
-        });
-
-      },
       handleSubmit() {
         try {
           console.log('FormData', this.formData);
         } catch(err) {
           console.log('FormError', err);
         }
+      },
+      updatePhoto(photo) {
+        this.formData.photo = photo;
+      },
+      onChangePermission(permission) {
+        this.isWebcamReady = permission
       }
-    }
+    },
+    components: {
+      Photo,
+    },
   }
 </script>
